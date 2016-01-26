@@ -1,0 +1,87 @@
+%%% Audio chip play & low pass filter %%%
+
+%This code is based on MATLAB
+
+clear;
+clc;
+
+%input the audio chip and play it back
+[s,Fs,nbits]=wavread('recovery.wav');  %add a audio clip u want!
+t=size(s,1)/Fs;
+sl=s(:,1);                             %left channel
+sr=s(:,2);                             %right channel
+
+%FFT
+sl_fft=abs(fft(sl));                   %do fft
+sr_fft=abs(fft(sr));                   %do fft
+L=length(sl_fft);                      %get length 
+xs=(1:L/2)*Fs/L;                       %x coordinates = (n-1)*Fs/N, only take halp since symmetry
+ysl=2*sl_fft(1:L/2)/L;                 %y coordinates =  2*A/N
+ysr=2*sr_fft(1:L/2)/L;                 %y coordinates =  2*A/N
+
+%plot
+figure (1)
+subplot 221
+plot(1/Fs:1/Fs:t,sl);
+title('Left Channel');xlabel('Time(s)');ylabel('Amplitude');
+subplot 222
+plot(1/Fs:1/Fs:t,sr)
+title('Right Channel');xlabel('Time(s)');ylabel('Amplitude');
+subplot 223
+plot(xs,ysl);
+title('Freq spectrum');xlabel('Freq/Hz');ylabel('Amplitude');
+subplot 224
+plot(xs,ysr);
+title('Freq spectrum');xlabel('Freq/Hz');ylabel('Amplitude');
+
+%apply a low pass filter limit to 5kHz use IIR filter
+a=5000*2;                             %pass cut freq 5kHz
+b=6500*2;                             %stop cut freq 6.5kHz
+rp=1;                                 %pass ripple < 1dB
+sd=50;                                %stop decay > 50dB
+Wp=a/Fs;                              %normalize
+Ws=b/Fs;                              %normalize
+[n,Wn]=buttord(Wp,Ws,rp,sd);          %get min.order & 3dB cut freq
+[c,d]=butter(n,Wn);                   %get coefficient of filter
+[h,f]=freqz(c,d,'whole',Fs);          %get freq response
+f=(0:length(f)-1)*Fs/length(f);       %freq transform
+%plot
+figure (2)
+plot(f(1:length(f)/2),abs(h(1:length(f)/2)));
+title('Butterworth Filter');
+xlabel('Freq/Hz');
+ylabel('Amplitude');
+grid on;
+
+%output
+sl_F=filter(c,d,sl);                  %filtering
+sr_F=filter(c,d,sr);                  %filtering
+
+%FFT
+sl_fft=abs(fft(sl_F));                %do fft
+sr_fft=abs(fft(sr_F));                %do fft
+L=length(sl_fft);                     %get length 
+xs=(1:L/2)*Fs/L;                      %x coordinates = (n-1)*Fs/N, only take halp since symmetry
+ysl=2*sl_fft(1:L/2)/L;                %y coordinates =  2*A/N
+ysr=2*sr_fft(1:L/2)/L;                %y coordinates =  2*A/N
+
+%plot
+figure (3)
+subplot 221
+plot(1/Fs:1/Fs:t,sl_F);
+title('Filtered Left Channel');xlabel('Time(s)');ylabel('Amplitude');
+subplot 222
+plot(1/Fs:1/Fs:t,sr_F)
+title('Filtered Right Channel');xlabel('Time(s)');ylabel('Amplitude');
+subplot 223
+plot(xs,ysl);
+title('Filtered Freq spectrum');xlabel('Freq/Hz');ylabel('Amplitude');
+subplot 224
+plot(xs,ysr);
+title('Filtered Freq spectrum');xlabel('Freq/Hz');ylabel('Amplitude');
+
+%play back compare
+sound(s,Fs);
+pause(4);
+s_F=cat(2,sl_F,sr_F);
+sound(s_F,Fs);

@@ -1,0 +1,65 @@
+%%%                         MATLAB Assignment                         %%%
+%%% Feb 2016 | EE565LEC - Video Communication | University at Buffalo %%%
+
+clear;
+clc;
+
+%%%                            Lesson 3                               %%%
+%1. Create a single figure with two subplots. Put the following 
+%three normal PDFs in the left subplot 
+%and the corresponding CDFs in the right subplot
+
+%(a) Mean µ = 0 and variance σ^2 = 1 plotted as a solid red line 
+%with legend description‘\mu=0 and \sigmaˆ2=1’;
+X = [-20:0.1:20]; myMu1 = 0; myVar1 = 2;
+pdf1 = pdf('Normal',X,myMu1,myVar1);
+cdf1 = cdf('Normal',X,myMu1,myVar1);
+
+%(b) Mean µ = 0 and variance σ^2 = 2.5 plotted as a solid green line 
+%with legend description‘\mu=0 and \sigmaˆ2=2.5’;
+myMu2 = 0; myVar2 = 2.5;
+pdf2 = pdf('Normal',X,myMu2,myVar2);
+cdf2 = cdf('Normal',X,myMu2,myVar2);
+
+%(c)Mean µ = −3 and variance σ^2 = 0.5 plotted as a solid blue line 
+%with legend description ‘\mu=-3 and \sigmaˆ2=0.5’.
+myMu3 = -3; myVar3 = 0.5;
+pdf3 = pdf('Normal',X,myMu3,myVar3);
+cdf3 = cdf('Normal',X,myMu3,myVar3);
+
+%Label the x-axis of the left subplot containing the PDFs with ‘x’,
+%y-axis with ‘f X(x)’, and use the title ‘Normal PDF’. 
+%Label the x-axis of the right subplot
+%containing the CDFs with ‘x’, y-axis with ‘F X(x)’, 
+%and use the title ‘Normal CDF’.
+figure (1)
+subplot 121
+p1=plot(X,pdf1,'r');hold on;
+p2=plot(X,pdf2,'g');hold on;
+p3=plot(X,pdf3,'b');
+legend([p1 p2 p3],'\mu=0 and \sigmaˆ2=1','\mu=0 and \sigmaˆ2=2.5','\mu=-3 and \sigmaˆ2=0.5');
+title('Normal PDF');xlabel('x');ylabel('f X(x)');
+
+subplot 122
+c1=plot(X,cdf1,'r');hold on;
+c2=plot(X,cdf2,'g');hold on;
+c3=plot(X,cdf3,'b');
+legend([c1 c2 c3],'\mu=0 and \sigmaˆ2=1','\mu=0 and \sigmaˆ2=2.5','\mu=-3 and \sigmaˆ2=0.5');
+title('Normal cDF');xlabel('x');ylabel('F X(x)');
+
+
+%2.Create a single figure with two subplots as follows:
+%(a)
+randVect1 = 12*randn(1,1500)+30;
+figure (2)
+subplot 121
+hist(randVect1,25);
+title('Histogram of 1,500 Normal Random Variables (\mu=30 and \sigmaˆ2=144)');
+xlabel('Bin');ylabel('Frequency');
+
+%(b)
+randVect2=(randVect1-mean(randVect1))./sqrt(var(randVect1));
+subplot 122
+hist(randVect1,25);
+title('Histogram of 1,500 Normal Random Variables (\mu=0 and \sigmaˆ2=1)');
+xlabel('Bin');ylabel('Frequency');

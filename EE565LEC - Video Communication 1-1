@@ -1,0 +1,36 @@
+%%%                         MATLAB Assignment                         %%%
+%%% Feb 2016 | EE565LEC - Video Communication | University at Buffalo %%%
+
+clear;
+clc;
+
+%%%                            Lesson 1                               %%%
+%1.Plot the number of ways to order n objects, i.e.n!
+%Assume that n ∈ {0, 1, . . . , 8}. Label the x-axis with “n”, y-axis with “n!”, and use the title “Plot of n!”.
+n=0:1:8;
+f=factorial(n);
+figure (1)
+plot(n,f);xlabel('n');ylabel('n!');title('Plot of n!');
+
+%2. Create a second plot of n! using the built-in MATLAB function semilogy
+%instead of plot. This will allow you to better visualize the function for all values of n. 
+%Assume that n ∈ {0, 1, . . . , 8}. Label the x-axis with “n”, y-axis with “n!”, and use the title “Plot of
+%n! with the y-axis in log-scale.”
+figure (2)
+semilogy(n,f);xlabel('n');ylabel('n!');title('Plot of n! with the y-axis in log-scale.');
+
+%3.Plot the number of ways to pick k out of n objects, where k ≤ n, and arrange them in a sequence, i.e.n!/(n ? k)!
+%Assume that n = 8 and that k ∈ {0, 1, . . . , 8}. Label the x-axis with “k”, y-axis with “n!/(nk)!”
+%and use the title “Plot of k-Permutations for n = 8.”
+n=8
+k=0:1:8;
+figure (3)
+plot(k,factorial(n)./factorial(n-k));
+xlabel('k');ylabel('n!/(nk)!');title('Plot of k-Permutations for n = 8.');
+
+%Plot the number of k-element subsets of an n-element set, where k ≤ n, i.e.,n!k!/(n ? k)!
+%Assume that n = 8 and that k ∈ {0, 1, . . . , 8}. Label the x-axis with “k”, y-axis with “n!/k!(nk)!”, 
+%and use the title “Plot of Combinations for n = 8.”
+figure (4)
+plot(k,factorial(n)./(factorial(k).*factorial(n-k)));
+xlabel('k');ylabel('n!/k!(nk)!');title('Plot of Combinations for n = 8.');

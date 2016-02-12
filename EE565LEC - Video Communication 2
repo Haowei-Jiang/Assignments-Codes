@@ -1,0 +1,88 @@
+%%%                          Assignment 1                             %%%
+%%% Feb 2016 | EE565LEC - Video Communication | University at Buffalo %%%
+
+%This code is based on Matlab
+
+clear;
+clc;
+
+%1. plot the average Y PSNR (dB) (Y axis) vs. the average bitrate (X axis)
+
+%PSNR.mat file contains QP, Y PSNR, bit rate of both clips
+load('PSNR.mat');
+
+figure (1)
+p1=plot(QP,YPSNR,'r');
+hold on
+p2=plot(QP,YPSNR1,'b');
+xlabel('Quantization Parameters');ylabel('Y PSNR (dB)');
+title('silent cif vs stefan cif');legend('silent cif','stefan cif');
+grid on
+
+figure (2)
+p3=plot(AverageBitRate,YPSNR,'r');
+hold on
+p4=plot(AverageBitRate1,YPSNR1,'b');
+xlabel('Average Bit Rate (kbits/s)');ylabel('Y PSNR (dB)');
+title('silent cif vs stefan cif');legend('silent cif','stefan cif');
+grid on
+
+2. find source special model parameters a & b
+[p1,S1,mu1] = polyfit(QP,lnR,1);   
+[p2,S2,mu2] = polyfit(QP,lnR1,1);
+
+a1=-1/p1(1)
+b1=-p1(2)
+a2=-1/p2(1)
+b2=-p2(2)
+
+Rnew=exp(p1(1)*QP + p1(2));  %model
+Rnew1=exp(p2(1)*QP + p2(2));
+
+figure (3)
+p5=plot(QP,AverageBitRate,'r');hold on
+p6=plot(QP,AverageBitRate1,'b');hold on
+p7=plot(QP,Rnew,'--r');hold on
+p8=plot(QP,Rnew1,'--b');
+xlabel('Quantization Parameters');ylabel('Average Bit Rate (kbits/s)');
+title('silent cif vs stefan cif');legend([p5 p6 p7 p8],'silent cif origin','stefan cif origin','silent cif model','stefan cif model');
+grid on
+
+e=abs(AverageBitRate-Rnew)*100./Rnew;
+e1=abs(AverageBitRate1-Rnew1)*100./Rnew1;
+figure (4)
+p9=plot(QP,e,'r'); hold on
+p10=plot(QP,e1,'b');
+xlabel('Quantization Parameters');ylabel('Bit Rate Error (%)');
+title('silent cif vs stefan cif');legend('silent cif','stefan cif');
+grid on
+
+ave_e=mean(e)
+ave_e1=mean(e1)
+
+%3.determine the rate distortion
+MSE=255^2./(10.^(YPSNR./10)); %experiment data
+MSE1=255^2./(10.^(YPSNR1./10));
+
+D=QP.^2./3;  %model
+
+figure (5)
+p9=plot(QP,MSE,'r');hold on
+p10=plot(QP,MSE1,'b');hold on
+p11=plot(QP,sqrt(D),'g')
+xlabel('Quantization Parameters');ylabel('MSE');
+title('silent cif vs stefan cif');legend([p9 p10 p11],'silent cif origin','stefan cif origin','Distortion Model');
+grid on
+
+figure (6)
+e=abs(MSE-sqrt(D))*100./sqrt(D);
+e1=abs(MSE1-sqrt(D))*100./sqrt(D);
+
+p12=plot(QP,e,'r'); hold on
+p13=plot(QP,e1,'b');
+xlabel('Quantization Parameters');ylabel('Distortion Error (%)');
+title('silent cif vs stefan cif');legend('silent cif','stefan cif');
+grid on
+
+ave_e2=mean(e)
+ave_e3=mean(e1)
